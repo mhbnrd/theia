@@ -66,6 +66,11 @@ export namespace TaskCommands {
         category: TASK_CATEGORY,
         label: 'Clear History'
     };
+
+    export const TASK_CUSTOM_RUN: Command = {
+        id: 'task:custom-run',
+        category: TASK_CATEGORY
+    };
 }
 
 const TASKS_STORAGE_KEY = 'tasks';
@@ -134,6 +139,23 @@ export class TaskFrontendContribution implements CommandContribution, MenuContri
                         return this.taskService.run(source, label);
                     }
                     return this.quickOpenTask.open();
+                }
+            }
+        );
+        registry.registerCommand(
+            TaskCommands.TASK_CUSTOM_RUN,
+            {
+                isEnabled: () => true,
+                // tslint:disable-next-line:no-any
+                execute: (...args: any[]) => {
+                    const [source, label, overrides] = args;
+                    if (source && label) {
+                        if (overrides) {
+                            return this.taskService.customRun(source, label, overrides);
+                        } else {
+                            return this.taskService.run(source, label);
+                        }
+                    }
                 }
             }
         );
